@@ -17,13 +17,13 @@ const generateToken = (user) => {
 module.exports = {
   Mutation: {
     async register(parent, { registerInput: { username, email, password, confirmPassword }}, context, info) {
-      // TODO: Validate user data
+      // Validate user data
       const { valid, errors } = validateRegisterInput(username, email, password, confirmPassword);
 
       if (!valid) {
         throw new UserInputError('Errors', errors);
       }
-      // TODO: Make sure user doesnt exist
+      // Make sure user doesnt exist
       const user = await User.findOne({ username });
 
       if (user) {
