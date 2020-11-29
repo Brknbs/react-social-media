@@ -31,14 +31,20 @@ module.exports = {
     },
     deleteComment: async (parent, { postID, commentID }, context) => {
       const { username } = checkAuth(context);
+      const post = await Post.findById(postID);
 
-      const post = Post.findOne(postID);
+      if (post) {
+        const commentIndex = post.comments.findIndex(c => c.id === commentID);
 
-      if (post.username === username) {
-        const deletedPost = await post.comments.deleteOne({ commentID });
-        return deletedPost;
+        if (post.comments[commentIndex].username === username) {
+          post.comments.splice(commentIndex, 1);
+          await post.save();
+          return post;
+        } else {
+          throw new AuthenticationError('Action not allowed');
+        }
       } else {
-        throw new AuthenticationError('Only the owner of the post can delete the post');
+        throw new UserInputError('Post not found');
       }
     }
   }
