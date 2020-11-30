@@ -1,10 +1,10 @@
 const Post = require('../../models/Post');
 const checkAuth = require('../../utils/checkAuth');
-const { AuthenticationError } = require('apollo-server');
+const { AuthenticationError, UserInputError } = require('apollo-server');
 
 module.exports = {
   Query: {
-    async getPosts() {
+    getPosts: async () => {
       try {
         const posts = await Post.find().sort({ createdAt: -1 });
         return posts;
@@ -12,7 +12,7 @@ module.exports = {
         throw new Error(error);
       }
     },
-    async getPost(parent, { postID }) {
+    getPost: async (parent, { postID }) => {
       try {
         const post = await Post.findById(postID);
   
@@ -27,7 +27,7 @@ module.exports = {
     }
   },
   Mutation: {
-    async createPost(parent, { body }, context) {
+    createPost: async (parent, { body }, context) => {
       const user = checkAuth(context);
 
       const newPost = new Post({
@@ -41,13 +41,13 @@ module.exports = {
 
       return post;
     },
-    async deletePost(parent, { postID }, context) {
+    deletePost: async (parent, { postID }, context) => {
       const user = checkAuth(context);
 
       try {
         const post = await Post.findById(postID);
 
-        if (user.username == post.username) {
+        if (user.username === post.username) {
           await post.delete();
           return 'Post deleted successfully';
         } else {
@@ -55,6 +55,28 @@ module.exports = {
         }
       } catch (error) {
         throw new Error(error);
+      }
+    },
+    likePost: async (parent, { postID }, context) => {
+      const { username } = checkAuth(context);
+
+      const post = await Post.findById(postID);
+
+      if (post) {
+        if (post.likes.find(like => like.username === username)) {
+          // post already liked, unlike it
+          post.likes = post.likes.filter(like => like.username !== username);
+        } else {
+          post.likes.push({
+            username,
+            createdAt: new Date().toISOString()
+          });
+        }
+
+        await post.save();
+        return post;
+      } else {
+        throw new UserInputError('Post not found');
       }
     }
   }
