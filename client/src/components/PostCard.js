@@ -20,7 +20,7 @@ const PostCard = ({ post }) => {
     <Card fluid>
       <Card.Content>
         <Image
-          floated='right'
+          floated='left'
           size='mini'
           src='https://react.semantic-ui.com/images/avatar/large/molly.png'
         />
@@ -35,6 +35,7 @@ const PostCard = ({ post }) => {
           basic={!liked}
           label={{ basic: true, color: 'purple', pointing: 'left', content: `${likeCount}` }}
           onClick={likePost}
+          className='like-button'
         />
         <Button
           color='blue'

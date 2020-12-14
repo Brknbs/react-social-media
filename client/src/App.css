@@ -1,6 +1,25 @@
+body {
+  background-color: #fcfbf8;
+}
+
+html {
+  font-family: 'Mukta', sans-serif !important;
+}
+
 .page-title {
   display: block !important;
   text-align: center;
   font-size: 2rem;
   margin-top: 0.5rem;
 }
+
+.navbar-container {
+  margin-top: 5rem;
+}
+
+.content-container {
+  margin-left: 3rem;
+  margin-top: 3rem;
+}
+
+

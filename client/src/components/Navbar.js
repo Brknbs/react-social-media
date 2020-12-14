@@ -10,7 +10,7 @@ const Navbar = () => {
     const handleItemClick = (e, { name }) => setActiveItem(name);
 
     return (
-        <Menu pointing secondary size='massive' color='purple'>
+        <Menu pointing secondary fluid size='massive' color='purple' className='navbar'>
             <Menu.Item
                 name='home'
                 active={activeItem === 'home'}
