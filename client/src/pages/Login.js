@@ -23,9 +23,10 @@ const Login = (props) => {
             props.history.push('/');
         },
         onError: error => {
-            let errObject = error.graphQLErrors[0].extensions.exception.errors;
-            console.log(error.graphQLErrors)
-            setErrors(errObject);
+            // let errObject = error.graphQLErrors[0].extensions.exception.errors;
+            // console.log(error.graphQLErrors)
+            // setErrors(errObject);
+            console.log('Error')
         },
         variables: values
     });
