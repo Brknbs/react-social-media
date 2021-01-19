@@ -4,9 +4,11 @@ import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import { FETCH_POSTS_QUERY } from '../utils/graphql';
 
-const DeleteButton = ({ postID, callback }) => {
+const DeleteButton = ({ postID, commentID, callback }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [deletePost] = useMutation(DELETE_POST_MUTATION, {
+  const mutation = commentID ? DELETE_COMMENT_MUTATION : DELETE_POST_MUTATION;
+
+  const [deletePostOrComment] = useMutation(mutation, {
     refetchQueries: [{
       query: FETCH_POSTS_QUERY
     }],
@@ -27,7 +29,8 @@ const DeleteButton = ({ postID, callback }) => {
       }
     },
     variables: {
-      postID
+      postID,
+      commentID
     }
   });
 
@@ -43,7 +46,7 @@ const DeleteButton = ({ postID, callback }) => {
       <Confirm 
         open={confirmOpen}
         onCancel={() => setConfirmOpen(false)}
-        onConfirm={deletePost}
+        onConfirm={deletePostOrComment}
       />
     </>
   );
@@ -52,6 +55,18 @@ const DeleteButton = ({ postID, callback }) => {
 const DELETE_POST_MUTATION = gql`
   mutation deletePost($postID: ID!) {
     deletePost(postID: $postID)
+  }
+`;
+
+const DELETE_COMMENT_MUTATION = gql`
+  mutation deleteComment($postID: ID!, $commentID: ID!) {
+    deleteComment(postID: $postID, commentID: $commentID) {
+      id
+      comments {
+        id username createdAt body
+      }
+      commentCount
+    }
   }
 `;
 
